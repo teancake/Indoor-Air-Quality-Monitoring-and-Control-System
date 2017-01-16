@@ -1,0 +1,10 @@
+[Unit]
+Description=Office Air Quality Controller
+After=mosquitto.service 
+Requires=mosquitto.service
+[Service]
+ExecStart=/home/alarm/bin/office_air_quality_controller.py
+RestartSec=30
+Restart=on-failure
+[Install]
+WantedBy=default.target

@@ -1,0 +1,12 @@
+[Unit]
+Description=Publish Beijing Air Quality
+After=mosquitto.service 
+Requires=mosquitto.service
+
+[Service]
+ExecStart=/home/alarm/bin/publish_beijing_air_quality.py
+RestartSec=30
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

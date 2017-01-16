@@ -1,0 +1,11 @@
+[Unit]
+Description=Publish Office Air Quality
+After=mosquitto.service network.target
+Requires=mosquitto.service
+
+[Service]
+ExecStart=/home/alarm/bin/publish_office_air_quality.py
+RestartSec=30
+Restart=on-failure
+[Install]
+WantedBy=default.target
