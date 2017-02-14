@@ -1,11 +1,17 @@
-# Indoor-Air-Quality-Monitoring-and-Control-System
-Hardware and software design of an indoor air quality monitoring and control system.
+# Hardware Design of the Indoor Air Quality Monitoring and Control System
 
-The control unit hardware has its own repository here
-https://github.com/teancake/WiFi-Switch
+The hardware of the system has three individual units, the server, the sensor unit, and the control unit, interconnected via a WiFi network. An air purifier is connected to the control unit. 
+The structure of the hardware design is shown in the following figure. 
 
-The sensor unit hardware has its own repository here
+## The server hardware
+The server hardware is simply a Raspberry Pi 2 Model B board, a description of which can be found at 
+https://www.raspberrypi.org/products/raspberry-pi-2-model-b/
+
+## The sensor unit hardware 
+The sensor unit hardware has its own repository at
 https://github.com/teancake/Air-Quality-Monitor
 
-The server hardware is simply a Raspberry Pi 2 Model B board here
-https://www.raspberrypi.org/products/raspberry-pi-2-model-b/
+## The control unit hardware
+The control unit hardware has its own repository at
+https://github.com/teancake/WiFi-Switch
+
