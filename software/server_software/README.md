@@ -1,6 +1,6 @@
 # Indoor Air Quality Monitoring and Control System
 ## Server Software
-The server software listed in this directory runs above an [Arch Linux ARM] (https://archlinuxarm.org/ "Arch Linux ARM") operating system on the Raspberry Pi 2B minicomputer. These python scripts were tested under Python 3.5.0, and please report to me if there are issues with other versions of Python. 
+The server software listed in this directory runs in an [Arch Linux ARM] (https://archlinuxarm.org/ "Arch Linux ARM") operating system on the Raspberry Pi 2B minicomputer. These python scripts were tested under Python 3.5.0, and please report to me if there are issues with other versions of Python. 
 
 
 The server software includes a sensor data acquisition program, an outside air quality publishing program, a data storage program, and a controller program, and is built around an MQ Telemetry Transport (MQTT) broker. 
@@ -20,5 +20,5 @@ The controller program `office_air_quality_controller.py` subscribes measurement
 ### The MQTT Broker
 An MQTT broker is essential for the above sensor software. It manages the publications and subscriptions of the MQTT messages and distribute incoming messages to target clients. The mosquitto MQTT broker is recommended.  
 
-#### The Systemd Service Configuration Files 
+## The Systemd Service Configuration Files 
 The folder `systemd_services` contains the systemd service configuration files for the server programs, enabling the power-on-auto-start and restart-on-failure capabilities of the server programs. Theses files should be put in the `/usr/lib/systemd/system` directory of the Arch Linux ARM operating system and be configured by the `systemctl` command.
