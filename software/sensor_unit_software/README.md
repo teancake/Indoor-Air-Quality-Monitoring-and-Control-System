@@ -1,2 +1,3 @@
-# Indoor-Air-Quality-Monitoring-and-Control-System
-Hardware and software design of an indoor air quality monitoring and control system.
+# Indoor Air Quality Monitoring and Control System
+## Sensor Unit Software
+The sensor unit software in the folder `officenv_arduino_v1` is an Arduino program, which can be complied and uploaded to the AVR microprocessor on the Arduino board via the Arduino IDE. The program manages connections with all the peripherals, including the sensors, the WiFi module, and the display. The values of the DHT22 humidity sensor and SDS011 PM sensor are sampled at a fixed interval and displayed on the LCD screen. Data transmission over the WiFi operates at another interval, which is much longer than the display refresh interval.
