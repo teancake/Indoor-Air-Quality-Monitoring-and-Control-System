@@ -21,6 +21,10 @@ def get_beijing_pm_values_from_us_emb(http_header, time_out):
     xmlroot = ET.fromstring(res.content)
     # find the PM2.5 value
     pm2_5 = xmlroot.find('channel/item/Conc').text
+    # sometimes pm2.5 = -999 is returned indicating no data available
+    # force the number to be -1 if this happens
+    if (float(pm2_5) < -1):
+        pm2_5 = -1
     pm10 = 'N/A'
     # parse date and time in the data record
     dt = dateutil.parser.parse(xmlroot.find('channel/item/ReadingDateTime').text)
@@ -97,8 +101,10 @@ while 1:
     print(cur_date, cur_time, pm2_5, pm10)
     # publish a message then exit
     msgs = [{'topic':MQTT_TOPIC_PM25, 'payload': str(pm2_5)}, {'topic':MQTT_TOPIC_PM10, 'payload': str(pm10)}]
-
-    publish.multiple(msgs, hostname=MQTT_HOST_ADDR, port=MQTT_HOST_PORT, client_id=MQTT_CLIENT_ID, auth=auth_info)
+    try:
+        publish.multiple(msgs, hostname=MQTT_HOST_ADDR, port=MQTT_HOST_PORT, client_id=MQTT_CLIENT_ID, auth=auth_info)
+    except Exception as e:
+        print e
     # delay 10 minutes
     time.sleep(600) 
 
