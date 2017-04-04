@@ -78,6 +78,8 @@ cur = conn.cursor()
 
 while True:
     try:
+        # resubscribe on each loop to avoid abnormal stop/restart of mosquitto
+        mqttc.subscribe([(MQTT_TOPIC_PM25,0), (MQTT_TOPIC_PM10,0), (MQTT_TOPIC_AIR_PURIFIER,0), (MQTT_TOPIC_OUTSIDE_PM25,0), (MQTT_TOPIC_TEMPERATURE,0), (MQTT_TOPIC_HUMIDITY,0)])
         # date and time
         d = date.today()
         d = d.strftime("%d-%m-%Y")
