@@ -45,16 +45,16 @@ def compute_control_action(pm25, pm10, u_current, off_level, on_level):
     # the default control action is -1, which is an invalid value
     u = -1
     if (pm >= 0):
-        if (u_current == 0):    # lower
-            if (pm > on_level):
-                u = 1
-            else:
-                u = 0
-        else:                   # upper
+        if (u_current == 1):    # upper 
             if (pm < off_level):
                 u = 0
             else:
                 u = 1
+        else:                   # upper
+            if (pm > on_level):
+                u = 1
+            else:
+                u = 0
     return u
 
 # MQTT subscription callback function
@@ -86,8 +86,8 @@ mqttc.subscribe([(MQTT_TOPIC_PM25,0), (MQTT_TOPIC_PM10,0)])
 mqttc.on_message = on_message
 mqttc.on_publish = on_publish
 mqttc.loop_start()
-# initialise control action
-uPM = -1
+# initialise previous control action
+uPM = 0
 while True:
     # subscribe to avoid unexpected mosquitto server stop/restart 
     mqttc.subscribe([(MQTT_TOPIC_PM25,0), (MQTT_TOPIC_PM10,0)])
