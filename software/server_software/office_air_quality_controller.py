@@ -50,7 +50,7 @@ def compute_control_action(pm25, pm10, u_current, off_level, on_level):
                 u = 0
             else:
                 u = 1
-        else:                   # upper
+        else:                   # lower 
             if (pm > on_level):
                 u = 1
             else:
