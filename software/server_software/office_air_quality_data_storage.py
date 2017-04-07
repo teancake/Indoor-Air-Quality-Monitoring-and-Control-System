@@ -43,10 +43,16 @@ Temperature = 0
 Humidity = 0
 # sampling period
 TS_S = 20
-
+# previous time of heartbeat
+t_hb = 0
+# time interval to determine the loss-of-connection of the client
+T_HB_S = 60
+flag_online = 0
 # message callback
 def on_message(client, userdata, message):
-        global PM25, PM10, Airpurifier, Outside_PM25, Temperature, Humidity
+        global PM25, PM10, Airpurifier, Outside_PM25, Temperature, Humidity, t_hb
+        if message.topic != MQTT_TOPIC_OUTSIDE_PM25:
+            t_hb = time.time()
         if message.topic == MQTT_TOPIC_PM25:
             PM25 = float(message.payload)
         elif message.topic == MQTT_TOPIC_PM10:
@@ -76,30 +82,47 @@ conn = pymysql.connect(host="localhost", port=MYSQL_PORT, user=MYSQL_USER, passw
 # define a database cursor
 cur = conn.cursor()
 
+t_hb = 0
+
 while True:
     try:
-        # resubscribe on each loop to avoid abnormal stop/restart of mosquitto
         mqttc.subscribe([(MQTT_TOPIC_PM25,0), (MQTT_TOPIC_PM10,0), (MQTT_TOPIC_AIR_PURIFIER,0), (MQTT_TOPIC_OUTSIDE_PM25,0), (MQTT_TOPIC_TEMPERATURE,0), (MQTT_TOPIC_HUMIDITY,0)])
-        # date and time
-        d = date.today()
-        d = d.strftime("%d-%m-%Y")
-        t = time.strftime("%H:%M:%S")
-        # SQL query string
-        str_query = "INSERT INTO data (devID,date,time,attr1,attr2,attr3,attr4,attr5,attr6) VALUES (%s, \"%s\", \"%s\", %s, %s, %s, %s, %s, %s)" % (DEV_ID, d, t, PM25, PM10, Airpurifier, Outside_PM25, Temperature, Humidity) 
-        #print(str_query)
+        print(time.time() - t_hb)
+        flag_online = (time.time() - t_hb) < T_HB_S
+        # update status
+        if flag_online:
+            str_query = "UPDATE devices SET status=1 WHERE devID=%s" % (DEV_ID)
+        else:
+            str_query = "UPDATE devices SET status=0 WHERE devID=%s" % (DEV_ID)
+        print(str_query)
         try:
-            # execute the SQL command
             cur.execute(str_query)
-            # commit the changes in the database, i.e. to save the changes.
             conn.commit()
         except:
-            # rollback in case of any errors
             conn.rollback()
+        if flag_online:
+            # date and time
+            d = date.today()
+            d = d.strftime("%d-%m-%Y")
+            t = time.strftime("%H:%M:%S")
+            # SQL query string
+            str_query = "INSERT INTO data (devID,date,time,attr1,attr2,attr3,attr4,attr5,attr6) VALUES (%s, \"%s\", \"%s\", %s, %s, %s, %s, %s, %s)" % (DEV_ID, d, t, PM25, PM10, Airpurifier, Outside_PM25, Temperature, Humidity) 
+            print(str_query)
+            try:
+                # execute the SQL command
+                cur.execute(str_query)
+                # commit the changes in the database, i.e. to save the changes.
+                conn.commit()
+            except:
+                # rollback in case of any errors
+                conn.rollback()
         # wait till next sample time
         time.sleep(TS_S)
 
     except KeyboardInterrupt:
         break
+    except Exception as e:
+        print(e)
 # clean up on exit
 mqttc.loop_stop()
 # close the cursor
