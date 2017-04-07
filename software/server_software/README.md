@@ -8,7 +8,7 @@ The server software includes a sensor data acquisition program, an outside air q
 To install Arch Linux ARM on the Raspberry Pi board, follow the instructions here at https://archlinuxarm.org/platforms/armv7/broadcom/raspberry-pi-2. After installation, copy the folder `rpisetup` into the home directory on the mircoSD card, power up the Pi board, ssh to it, and execute the commands in setup.sh (DO NOT execute this file directly).
 
 ### The Indoor Sensor Data Acquisition Program 
-The sensor data acquisition program `publish_office_air_quality.py` establishes a TCP server, which accepts connections from the sensor unit software. The program then interprets the incoming sensor measurements and publishes measurement messages. *This program is no longer used, since with the updated sensor software, the sensor can connect directly to an MQTT server, and publish data without a dedicated TCP server.*
+The sensor data acquisition program `publish_office_air_quality.py` establishes a TCP server, which accepts connections from the sensor unit software. The program then interprets the incoming sensor measurements and publishes measurement messages. **This program is no longer used, since with the updated sensor software, the sensor can connect directly to an MQTT server, and publish data without a dedicated TCP server.**
 
 ### The Outside Air Quality Publishing Program
 The outside air quality publishing program `publish_beijing_air_quality.py` polls the Beijing air quality from various sources and publish the data obtained in MQTT messages. This program has its own repository at [Beijing PM Values](https://github.com/teancake/Beijing-PM-Values "Beijing PM Values").
