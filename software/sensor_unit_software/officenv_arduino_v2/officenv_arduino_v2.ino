@@ -109,10 +109,12 @@ void setup() {
 
 
 void loop(void) {
+  /* read the pm sensor at each loop to empty the input buffer of the serial */
+  /* do not put get_pms() inside the interval check */
+  get_pms();
   /* if the given sampling period is reached, or millis() function overflows */
   if (millis() - millis_dht_prev > TS_DHT_MS || millis() - millis_dht_prev < 0 ) {
     get_dht();
-    get_pms();
     millis_dht_prev = millis();
     display_env_params(t, hic, h, pm2, pm10);
   }
