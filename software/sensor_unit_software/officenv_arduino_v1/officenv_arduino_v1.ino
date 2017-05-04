@@ -72,7 +72,7 @@ float h, t, hic;
 
 
 /* This is a scaling factor for the data */
-#define SF 100
+#define SF 10
 
 
 WIFI wifi;

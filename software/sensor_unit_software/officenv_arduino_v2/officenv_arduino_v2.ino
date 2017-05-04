@@ -58,7 +58,7 @@ float pm2, pm10;
 float h, t, hic;
 /* This is a scaling factor for the data, since the serial transmits only
    integer values for the convenience of parsing in the ESP module */
-int scale = 100;
+int scale = 10;
 
 /* data buffer */
 char serial_out_buf[50];
