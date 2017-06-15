@@ -85,21 +85,29 @@ cur = conn.cursor()
 t_hb = 0
 
 while True:
+    time.sleep(TS_S)
     try:
+        # reconnect to MySQL if connection is broken
+        if not conn.open:
+            conn = pymysql.connect(host="localhost", port=MYSQL_PORT, user=MYSQL_USER, passwd=MYSQL_PASSWORD, db=MYSQL_DB)
+            cur = conn.cursor()
+        # resubscribe MQTT topics in case connection is broken
         mqttc.subscribe([(MQTT_TOPIC_PM25,0), (MQTT_TOPIC_PM10,0), (MQTT_TOPIC_AIR_PURIFIER,0), (MQTT_TOPIC_OUTSIDE_PM25,0), (MQTT_TOPIC_TEMPERATURE,0), (MQTT_TOPIC_HUMIDITY,0)])
-        print(time.time() - t_hb)
+        #print(time.time() - t_hb)
         flag_online = (time.time() - t_hb) < T_HB_S
         # update status
         if flag_online:
             str_query = "UPDATE devices SET status=1 WHERE devID=%s" % (DEV_ID)
         else:
             str_query = "UPDATE devices SET status=0 WHERE devID=%s" % (DEV_ID)
-        print(str_query)
+        # print(str_query)
         try:
             cur.execute(str_query)
             conn.commit()
-        except:
+        except Exception as e:
             conn.rollback()
+            # print("Skipping the current loop.")
+            continue
         if flag_online:
             # date and time
             d = date.today()
@@ -107,17 +115,16 @@ while True:
             t = time.strftime("%H:%M:%S")
             # SQL query string
             str_query = "INSERT INTO data (devID,date,time,attr1,attr2,attr3,attr4,attr5,attr6) VALUES (%s, \"%s\", \"%s\", %s, %s, %s, %s, %s, %s)" % (DEV_ID, d, t, PM25, PM10, Airpurifier, Outside_PM25, Temperature, Humidity) 
-            print(str_query)
+            # print(str_query)
             try:
                 # execute the SQL command
                 cur.execute(str_query)
                 # commit the changes in the database, i.e. to save the changes.
                 conn.commit()
-            except:
-                # rollback in case of any errors
+            except Exception as e:
                 conn.rollback()
-        # wait till next sample time
-        time.sleep(TS_S)
+                # print("Skipping the current loop.")
+                continue
 
     except KeyboardInterrupt:
         break
